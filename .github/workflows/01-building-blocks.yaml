@@ -4,12 +4,12 @@ on: push
 
 jobs:
     echo-hell0:
-        runs-on: ubuntu-latest
+        runs-on: macos-15
         steps:
             - name: Echo Hello
               run: echo "Hello"
     echo-bye:
-        runs-on: ubuntu-latest
+        runs-on: macos-15
         steps:
             - name: Echo Bye
               run: |
