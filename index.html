@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loki's Card Spend Bible</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f11;
+    --bg2: #16161a;
+    --bg3: #1e1e24;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e8ec;
+    --text2: #8888a0;
+    --text3: #55556a;
+    --green: #22c97a;
+    --green-bg: rgba(34,201,122,0.12);
+    --amber: #f5a623;
+    --amber-bg: rgba(245,166,35,0.12);
+    --blue: #4da6ff;
+    --blue-bg: rgba(77,166,255,0.12);
+    --red: #ff6b6b;
+    --red-bg: rgba(255,107,107,0.1);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167,139,250,0.12);
+    --teal: #2dd4bf;
+    --teal-bg: rgba(45,212,191,0.12);
+    --pink: #f472b6;
+    --pink-bg: rgba(244,114,182,0.12);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 24px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .header {
+    margin-bottom: 28px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .metric {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .metric-val {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .wallet-section {
+    margin-bottom: 24px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .wallet-cards {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .wallet-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .wallet-card.always {
+    border-color: rgba(34,201,122,0.3);
+    background: rgba(34,201,122,0.05);
+  }
+
+  .wc-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+
+  .wallet-card.always .wc-label {
+    color: var(--green);
+    opacity: 0.8;
+  }
+
+  .wc-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .wc-role {
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .pill {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    border: 0.5px solid var(--border2);
+    color: var(--text2);
+    background: var(--bg2);
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  .pill:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+  .pill.active { background: var(--bg3); color: var(--text); border-color: rgba(255,255,255,0.3); font-weight: 500; }
+
+  .table-wrap {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+  }
+
+  thead { background: var(--bg3); }
+
+  th {
+    text-align: left;
+    padding: 11px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 0.5px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--border);
+    vertical-align: top;
+    font-size: 13px;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr.excluded td { opacity: 0.5; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+
+  .b-green { background: var(--green-bg); color: var(--green); }
+  .b-amber { background: var(--amber-bg); color: var(--amber); }
+  .b-blue { background: var(--blue-bg); color: var(--blue); }
+  .b-red { background: var(--red-bg); color: var(--red); }
+  .b-gray { background: rgba(255,255,255,0.06); color: var(--text2); }
+  .b-purple { background: var(--purple-bg); color: var(--purple); }
+  .b-teal { background: var(--teal-bg); color: var(--teal); }
+
+  .card-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .ct-idfc { background: var(--blue-bg); color: var(--blue); }
+  .ct-axis { background: var(--amber-bg); color: var(--amber); }
+  .ct-icici { background: var(--green-bg); color: var(--green); }
+  .ct-wow { background: var(--purple-bg); color: var(--purple); }
+  .ct-select { background: var(--teal-bg); color: var(--teal); }
+  .ct-flipkart { background: var(--pink-bg); color: var(--pink); }
+  .ct-na { background: rgba(255,255,255,0.05); color: var(--text3); }
+
+  .where-text { font-weight: 500; color: var(--text); }
+  .notes-text { color: var(--text2); font-size: 12px; line-height: 1.5; }
+  .type-text { color: var(--text3); font-size: 12px; }
+
+  .count-bar {
+    font-size: 11px;
+    color: var(--text3);
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    body { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Loki's Card Spend Bible</h1>
+  <p>Complete routing guide — every rupee optimized</p>
+</div>
+
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-label">Always in wallet</div>
+    <div class="metric-val">Power+ · Horizon</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Best cashback rate</div>
+    <div class="metric-val">5% (Power+ / ICICI)</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Best travel rate</div>
+    <div class="metric-val">5 Mi / ₹100</div>
+  </div>
+</div>
+
+<div class="wallet-section">
+  <div class="section-label">Your Card Stack</div>
+  <div class="wallet-cards">
+    <div class="wallet-card always">
+      <div class="wc-label">Always carry</div>
+      <div class="wc-name">IDFC First Power+</div>
+      <div class="wc-role">Essentials default</div>
+    </div>
+    <div class="wallet-card always">
+      <div class="wc-label">Always carry</div>
+      <div class="wc-name">Axis Horizon</div>
+      <div class="wc-role">Lifestyle & travel</div>
+    </div>
+    <div class="wallet-card">
+      <div class="wc-label">Pick up when needed</div>
+      <div class="wc-name">Amazon Pay ICICI</div>
+      <div class="wc-role">Online / insurance</div>
+    </div>
+    <div class="wallet-card">
+      <div class="wc-label">Pick up when needed</div>
+      <div class="wc-name">Flipkart Axis</div>
+      <div class="wc-role">Zomato / Flipkart</div>
+    </div>
+    <div class="wallet-card">
+      <div class="wc-label">Pick up when needed</div>
+      <div class="wc-name">IDFC WOW</div>
+      <div class="wc-role">Cloud / USD only</div>
+    </div>
+    <div class="wallet-card">
+      <div class="wc-label">Pick up when needed</div>
+      <div class="wc-name">IDFC First Select</div>
+      <div class="wc-role">Movie nights</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Filter by Category</div>
+<div class="filters" id="filters"></div>
+<div class="count-bar" id="count"></div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%">Spend / Platform</th>
+        <th style="width:15%">Best Card</th>
+        <th style="width:10%">Rate</th>
+        <th style="width:11%">Reward Type</th>
+        <th>Notes & Chennai Intel</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
+<script>
+const data = [
+  { cat:"Grocery", where:"BigBasket / Zepto", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"MCC 5411 — most reliable grocery trigger in your stack" },
+  { cat:"Grocery", where:"Amazon Fresh", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best for bulk monthly pantry runs — direct wallet cashback" },
+  { cat:"Grocery", where:"Blinkit / Swiggy Instamart", card:"Flipkart Axis", ct:"flipkart", rate:"4%", rc:"b-amber", type:"Cashback", notes:"Emergency diapers/wipes — Flipkart Axis wins here" },
+  { cat:"Grocery", where:"Reliance Fresh / Nilgiris / More", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Swipe physical card at POS — don't use UPI" },
+  { cat:"Grocery", where:"Pazhamudir Nilayam (Chennai)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"All Chennai branches code as grocery MCC reliably" },
+  { cat:"Grocery", where:"Kovai Pazhamudir", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Same as Pazhamudir — physical swipe" },
+  { cat:"Grocery", where:"Country Delight / Akshayakalpa", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Use wallet top-up inside their app, not UPI" },
+  { cat:"Grocery", where:"DMart (if card accepted)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"DMart often prefers cash/UPI — use Power+ if card accepted" },
+
+  { cat:"Bills & Utilities", where:"TANGEDCO (Electricity)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Pay via HP Pay App or IDFC First App — correct MCC trigger. Never use Horizon (0%)." },
+  { cat:"Bills & Utilities", where:"Airtel / Jio postpaid", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Pay via IDFC First App under Telecom category" },
+  { cat:"Bills & Utilities", where:"ACT Fibernet", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"IDFC First App or ACT portal direct" },
+  { cat:"Bills & Utilities", where:"Metrowater Chennai", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Chennai Metrowater portal — card payment" },
+  { cat:"Bills & Utilities", where:"Indane / HP Gas", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"HP Pay App gives best category match" },
+  { cat:"Bills & Utilities", where:"FASTag recharge", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Never use Horizon — Transportation excluded (0%). Power+ wins." },
+  { cat:"Bills & Utilities", where:"Piped gas (IGL/MGL)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Utility MCC — Power+ default" },
+
+  { cat:"Food & Dining", where:"Zomato / Swiggy (online order)", card:"Flipkart Axis", ct:"flipkart", rate:"4%", rc:"b-amber", type:"Cashback", notes:"Direct statement cashback. Horizon gives only 2 Mi — Flipkart Axis wins." },
+  { cat:"Food & Dining", where:"Fine dining — ECR / OMR", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Buhari, The Great Kabab Factory, Annalakshmi, Cream Centre" },
+  { cat:"Food & Dining", where:"Starbucks / Blue Tokai / Third Wave", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Counter purchase — tap or swipe Horizon" },
+  { cat:"Food & Dining", where:"Mall food courts", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Phoenix / VR Mall / Express Avenue food courts" },
+  { cat:"Food & Dining", where:"Local restaurants (non-mall)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Saravana Bhavan, Murugan Idli, Hotel Palmgrove etc." },
+  { cat:"Food & Dining", where:"Swiggy Dineout / EazyDiner", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Online table booking + pay at restaurant" },
+
+  { cat:"Online Shopping", where:"Amazon / Cloudtail", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best card for entire Amazon ecosystem — electronics, baby gear, monitors" },
+  { cat:"Online Shopping", where:"Flipkart / Myntra", card:"Flipkart Axis", ct:"flipkart", rate:"5%", rc:"b-green", type:"Cashback", notes:"Dhriti's toys, clothes — FirstCry brand on Flipkart works too" },
+  { cat:"Online Shopping", where:"Ajio", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Better than flat 1% on Power+" },
+  { cat:"Online Shopping", where:"Nykaa", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"For wife's purchases — Horizon is best in stack here" },
+  { cat:"Online Shopping", where:"Meesho / Snapdeal", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"No card gives great reward here — ICICI at 1% is safest" },
+  { cat:"Online Shopping", where:"FirstCry (direct site)", card:"Amazon Pay ICICI", ct:"icici", rate:"1-2%", rc:"b-gray", type:"Cashback", notes:"Check if available on Amazon — if yes, Amazon Pay ICICI at 5%" },
+  { cat:"Online Shopping", where:"Tata Cliq / Croma online", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Electronics / appliances online" },
+
+  { cat:"Offline Shopping", where:"Phoenix / VR Mall / Express Avenue", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Default mall card — clothing, shoes, lifestyle stores" },
+  { cat:"Offline Shopping", where:"Zara / H&M / Nike / Adidas", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"All branded apparel stores" },
+  { cat:"Offline Shopping", where:"BabyHug / Mothercare", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Physical stores — Dhriti's shopping" },
+  { cat:"Offline Shopping", where:"Reliance Digital / Croma", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Check for bank offers first — HDFC/SBI deals common here" },
+  { cat:"Offline Shopping", where:"Apple Store (Aptronix / Imagine)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"MacBook / iPhone — check for no-cost EMI bank offer first" },
+  { cat:"Offline Shopping", where:"Ritchie Street (PC components)", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"Local shops — low rewards everywhere, ICICI safest bet" },
+  { cat:"Offline Shopping", where:"Pharmacy — Apollo / Medplus", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Even inside malls — switch to Power+ at pharmacy counter" },
+
+  { cat:"Jewelry", where:"GRT Jewellers (offline / scheme)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"MCC 5944 NOT in Horizon exclusion list. Monthly ₹11k = 2,640 Mi/year." },
+  { cat:"Jewelry", where:"Tanishq / Malabar Gold", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Verify first month credits — some chains use different MCC" },
+  { cat:"Jewelry", where:"Lalitha Jewellery", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Check for HDFC/SBI festive offers before swiping Horizon" },
+
+  { cat:"Travel", where:"IndiGo direct site", card:"Axis Horizon", ct:"axis", rate:"5 Mi/₹100", rc:"b-green", type:"Miles", notes:"ONLY on airline direct site — NOT via MMT/Cleartrip. Best rate in stack." },
+  { cat:"Travel", where:"Air India / SpiceJet direct", card:"Axis Horizon", ct:"axis", rate:"5 Mi/₹100", rc:"b-green", type:"Miles", notes:"Same rule — direct booking only for 5 Mi rate" },
+  { cat:"Travel", where:"MakeMyTrip / Cleartrip / Ixigo", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"OTA booking = 2 Mi on Horizon vs 2% real cashback on ICICI. ICICI wins." },
+  { cat:"Travel", where:"RedBus (bus tickets)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Real cashback beats miles for OTA travel" },
+  { cat:"Travel", where:"IRCTC (train tickets)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Check IRCTC bank offers first — SBI/HDFC often run discounts" },
+  { cat:"Travel", where:"Hotels via Amazon Travel", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Book hotels on Amazon Travel for 5% cashback" },
+  { cat:"Travel", where:"MAA Domestic Lounge", card:"Axis Horizon", ct:"axis", rate:"8/qtr", rc:"b-blue", type:"Lounge access", notes:"Travel Club Lounge — no spend requirement in 2026. Best quarterly limit in stack." },
+  { cat:"Travel", where:"MAA International Lounge", card:"Axis Horizon", ct:"axis", rate:"2/qtr", rc:"b-blue", type:"Lounge access", notes:"Travel Club Lounge — international terminal" },
+  { cat:"Travel", where:"Uber / Ola / Rapido", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"Horizon gives 0% (Transportation excluded). ICICI 1% is best you have." },
+  { cat:"Travel", where:"Chennai Metro / MTC bus", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Pay via card / app wallet top-up — Power+ for transit" },
+
+  { cat:"Tech & Cloud", where:"AWS / cloud (USD billing)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Saves 3.5% + GST on every dollar. Most important card for DevOps cloud bills." },
+  { cat:"Tech & Cloud", where:"DigitalOcean / Linode / Hetzner", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"All USD SaaS — WOW only" },
+  { cat:"Tech & Cloud", where:"GitHub / Vercel / Netlify", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any USD subscription — WOW" },
+  { cat:"Tech & Cloud", where:"JetBrains / Obsidian / Akiflow (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any productivity SaaS billed in USD — WOW always" },
+  { cat:"Tech & Cloud", where:"Indian SaaS / INR billing", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Zoho, Freshworks etc. — INR billing, Horizon default" },
+
+  { cat:"Insurance & Finance", where:"Max Life premium (Amazon Pay portal)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Most cards give 0% on insurance. Amazon Pay gives 2% via portal. Saves thousands/year." },
+  { cat:"Insurance & Finance", where:"Health insurance (Aditya Birla)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Pay via Amazon Pay portal if listed" },
+  { cat:"Insurance & Finance", where:"Vehicle insurance renewal", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Check insurer's site for bank offers — otherwise Amazon Pay" },
+  { cat:"Insurance & Finance", where:"Mutual funds / SIP", card:"N/A — use bank transfer", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"No card rewards on MF/SIP. Use direct bank transfer." },
+  { cat:"Insurance & Finance", where:"Income tax / GST payment", card:"N/A — use net banking", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"Govt. Institutions — all cards give 0%. Use net banking." },
+  { cat:"Insurance & Finance", where:"Rent payment (NoBroker/Rentpay)", card:"N/A — use net banking", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"Rent excluded on Horizon. Other cards charge processing fee. Net banking best." },
+
+  { cat:"Entertainment", where:"PVR / SPI Cinemas (Sathyam)", card:"IDFC First Select", ct:"select", rate:"BOGO", rc:"b-teal", type:"Offer", notes:"Book via District App (formerly BookMyShow). Best movie deal in stack." },
+  { cat:"Entertainment", where:"BookMyShow (non-BOGO)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"If Select BOGO not applicable — use Horizon" },
+  { cat:"Entertainment", where:"Kids play area (Timezone / Smaaash)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Mall entertainment zones" },
+  { cat:"Entertainment", where:"Amazon Prime / Prime Video", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Always Amazon Pay ICICI for Prime subscriptions" },
+  { cat:"Entertainment", where:"Spotify / Netflix / OTT (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Check if on Amazon — if yes, use Amazon Pay ICICI (2-5%)" },
+
+  { cat:"Fuel", where:"Indian Oil / HP / Bharat Petrol", card:"IDFC Power+", ct:"idfc", rate:"1%", rc:"b-gray", type:"Value back", notes:"Horizon excludes fuel (0%). Power+ gives 1% + fuel surcharge waiver. Best in stack." },
+
+  { cat:"Wallet & UPI", where:"Paytm wallet top-up", card:"AVOID", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"Wallet top-up excluded on Horizon. Power+ doesn't reward wallets. Pay direct via card." },
+  { cat:"Wallet & UPI", where:"PhonePe / GPay UPI payments", card:"AVOID UPI", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"UPI transactions earn zero card rewards even if card is selected. Always pay card-direct." },
+
+  { cat:"Subscriptions", where:"ChatGPT Plus / Claude Pro (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Billed in USD — WOW saves 3.5% + GST. Never use Horizon or Power+ for USD subs." },
+  { cat:"Subscriptions", where:"Google Play Store (INR billing)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Digital goods MCC — not excluded on Horizon. Add card to Play Store payment methods." },
+  { cat:"Subscriptions", where:"Apple App Store / Apple One (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"INR billed — Horizon earns 2 Mi. Add as default payment in Apple ID settings." },
+  { cat:"Subscriptions", where:"Apple App Store / iCloud (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"If your Apple ID is billed in USD — switch to WOW immediately." },
+  { cat:"Subscriptions", where:"Spotify Premium (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"INR billing in India — Horizon default" },
+  { cat:"Subscriptions", where:"Netflix (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Netflix India bills in INR — Horizon earns miles" },
+  { cat:"Subscriptions", where:"Amazon Prime (INR)", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Always ICICI for Prime — 5% cashback beats Horizon miles easily" },
+  { cat:"Subscriptions", where:"YouTube Premium (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Billed via Google — INR, Horizon earns" },
+  { cat:"Subscriptions", where:"Obsidian Sync / Publish (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"USD subscription — WOW only" },
+  { cat:"Subscriptions", where:"Akiflow / Notion / Linear (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any productivity SaaS in USD — WOW" },
+  { cat:"Subscriptions", where:"GitHub Copilot / JetBrains (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"DevOps toolchain USD subs — WOW always" },
+  { cat:"Subscriptions", where:"Any sub available via Amazon Pay", card:"Amazon Pay ICICI", ct:"icici", rate:"2-5%", rc:"b-green", type:"Cashback", notes:"If the app accepts Amazon Pay — always prefer ICICI over Horizon. Real cashback beats miles." },
+];
+
+const cats = ["All", ...new Set(data.map(d => d.cat))];
+let active = "All";
+
+const filterDiv = document.getElementById("filters");
+cats.forEach(c => {
+  const el = document.createElement("span");
+  el.className = "pill" + (c === "All" ? " active" : "");
+  el.textContent = c;
+  el.onclick = () => {
+    active = c;
+    filterDiv.querySelectorAll(".pill").forEach(p => p.classList.toggle("active", p.textContent === c));
+    render();
+  };
+  filterDiv.appendChild(el);
+});
+
+function render() {
+  const tbody = document.getElementById("rows");
+  const countEl = document.getElementById("count");
+  const filtered = active === "All" ? data : data.filter(d => d.cat === active);
+  countEl.textContent = `${filtered.length} entries`;
+  tbody.innerHTML = filtered.map(d => `
+    <tr class="${d.rc === 'b-red' ? 'excluded' : ''}">
+      <td class="where-text">${d.where}</td>
+      <td><span class="card-tag ct-${d.ct}">${d.card}</span></td>
+      <td><span class="badge ${d.rc}">${d.rate}</span></td>
+      <td class="type-text">${d.type}</td>
+      <td class="notes-text">${d.notes}</td>
+    </tr>
+  `).join("");
+}
+
+render();
+</script>
+</body>
+</html>
