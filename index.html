@@ -1,474 +1,1247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loki's Card Spend Bible</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0f0f11;
-    --bg2: #16161a;
-    --bg3: #1e1e24;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.14);
-    --text: #e8e8ec;
-    --text2: #8888a0;
-    --text3: #55556a;
-    --green: #22c97a;
-    --green-bg: rgba(34,201,122,0.12);
-    --amber: #f5a623;
-    --amber-bg: rgba(245,166,35,0.12);
-    --blue: #4da6ff;
-    --blue-bg: rgba(77,166,255,0.12);
-    --red: #ff6b6b;
-    --red-bg: rgba(255,107,107,0.1);
-    --purple: #a78bfa;
-    --purple-bg: rgba(167,139,250,0.12);
-    --teal: #2dd4bf;
-    --teal-bg: rgba(45,212,191,0.12);
-    --pink: #f472b6;
-    --pink-bg: rgba(244,114,182,0.12);
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loki Finance OS Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f11;
+      --bg2: #16161a;
+      --bg3: #1e1e24;
+      --panel: #141419;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+      --text: #e8e8ec;
+      --text2: #9a9ab0;
+      --text3: #66667c;
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 32px 24px;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+      --green: #a6e22e;
+      --green-bg: rgba(166,226,46,0.14);
+      --amber: #fd971f;
+      --amber-bg: rgba(253,151,31,0.14);
+      --blue: #66d9ef;
+      --blue-bg: rgba(102,217,239,0.14);
+      --red: #f92672;
+      --red-bg: rgba(249,38,114,0.12);
+      --purple: #ae81ff;
+      --purple-bg: rgba(174,129,255,0.14);
+      --teal: #2ee8d6;
+      --teal-bg: rgba(46,232,214,0.14);
+      --pink: #ff79c6;
+      --pink-bg: rgba(255,121,198,0.14);
+      --yellow: #ffd866;
+      --yellow-bg: rgba(255,216,102,0.14);
 
-  .header {
-    margin-bottom: 28px;
-  }
+      --accent-glow: 0 0 0 1px rgba(255,255,255,0.03), 0 10px 30px rgba(0,0,0,0.4);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 18px 50px rgba(0,0,0,0.28);
+    }
 
-  .header h1 {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 4px;
-    letter-spacing: -0.3px;
-  }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
-  .header p {
-    font-size: 13px;
-    color: var(--text2);
-  }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(102,217,239,0.10), transparent 22%),
+        radial-gradient(circle at top right, rgba(174,129,255,0.10), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(249,38,114,0.06), transparent 28%),
+        linear-gradient(180deg, #101014 0%, #0f0f11 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 22px 48px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
 
-  .metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
+    .container {
+      max-width: 1560px;
+      margin: 0 auto;
+      position: relative;
+    }
 
-  .metric {
-    background: var(--bg2);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-  }
+    .top-glow, .side-glow {
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(60px);
+      opacity: 0.28;
+    }
 
-  .metric-label {
-    font-size: 11px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 6px;
-  }
+    .top-glow {
+      width: 520px;
+      height: 220px;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, rgba(102,217,239,0.38), rgba(174,129,255,0.38), rgba(255,121,198,0.30));
+      border-radius: 999px;
+    }
 
-  .metric-val {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-  }
+    .side-glow-left {
+      width: 220px;
+      height: 420px;
+      left: -60px;
+      top: 30%;
+      background: linear-gradient(180deg, rgba(166,226,46,0.20), rgba(46,232,214,0.08));
+      border-radius: 999px;
+    }
 
-  .wallet-section {
-    margin-bottom: 24px;
-  }
+    .side-glow-right {
+      width: 220px;
+      height: 420px;
+      right: -60px;
+      top: 18%;
+      background: linear-gradient(180deg, rgba(249,38,114,0.16), rgba(174,129,255,0.10));
+      border-radius: 999px;
+    }
 
-  .section-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 10px;
-  }
+    .hero {
+      background: linear-gradient(135deg, rgba(102,217,239,0.08), rgba(174,129,255,0.10));
+      border: 0.5px solid var(--border2);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
 
-  .wallet-cards {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(166,226,46,0.07), transparent 22%),
+        radial-gradient(circle at 85% 20%, rgba(255,121,198,0.08), transparent 24%),
+        linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.025) 45%, transparent 100%);
+      pointer-events: none;
+    }
 
-  .wallet-card {
-    background: var(--bg2);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    flex: 1;
-    min-width: 140px;
-  }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: start;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
 
-  .wallet-card.always {
-    border-color: rgba(34,201,122,0.3);
-    background: rgba(34,201,122,0.05);
-  }
+    .header h1 {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
 
-  .wc-label {
-    font-size: 10px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 5px;
-  }
+    .header p {
+      font-size: 14px;
+      color: var(--text2);
+      max-width: 860px;
+    }
 
-  .wallet-card.always .wc-label {
-    color: var(--green);
-    opacity: 0.8;
-  }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
 
-  .wc-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
+    .chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 0.5px solid var(--border2);
+      background: linear-gradient(145deg, rgba(30,30,36,0.92), rgba(20,20,25,0.92));
+      color: var(--text2);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
 
-  .wc-role {
-    font-size: 11px;
-    color: var(--text2);
-  }
+    .hero-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
 
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
+    .metric {
+      background: linear-gradient(145deg, rgba(22,22,26,0.96), rgba(18,18,22,0.96));
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--accent-glow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
 
-  .pill {
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    cursor: pointer;
-    border: 0.5px solid var(--border2);
-    color: var(--text2);
-    background: var(--bg2);
-    transition: all 0.15s;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-  }
+    .metric:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.16);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
 
-  .pill:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
-  .pill.active { background: var(--bg3); color: var(--text); border-color: rgba(255,255,255,0.3); font-weight: 500; }
+    .metric::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--pink), var(--amber));
+      opacity: 0.92;
+    }
 
-  .table-wrap {
-    background: var(--bg2);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    overflow-x: auto;
-  }
+    .metric-label {
+      font-size: 11px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 700px;
-  }
+    .metric-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+    }
 
-  thead { background: var(--bg3); }
+    .metric-sub {
+      margin-top: 6px;
+      color: var(--text2);
+      font-size: 12px;
+    }
 
-  th {
-    text-align: left;
-    padding: 11px 14px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    border-bottom: 0.5px solid var(--border);
-    white-space: nowrap;
-  }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 0;
+      position: relative;
+      z-index: 1;
+    }
 
-  td {
-    padding: 10px 14px;
-    border-bottom: 0.5px solid var(--border);
-    vertical-align: top;
-    font-size: 13px;
-  }
+    .nav a {
+      text-decoration: none;
+      color: var(--text2);
+      background: linear-gradient(145deg, rgba(30,30,36,0.92), rgba(20,20,25,0.92));
+      border: 0.5px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
 
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  tr.excluded td { opacity: 0.5; }
+    .nav a:hover { color: var(--text); border-color: var(--purple); box-shadow: 0 0 0 1px rgba(174,129,255,0.12); }
 
-  .badge {
-    display: inline-block;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: 'DM Mono', monospace;
-    white-space: nowrap;
-  }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
 
-  .b-green { background: var(--green-bg); color: var(--green); }
-  .b-amber { background: var(--amber-bg); color: var(--amber); }
-  .b-blue { background: var(--blue-bg); color: var(--blue); }
-  .b-red { background: var(--red-bg); color: var(--red); }
-  .b-gray { background: rgba(255,255,255,0.06); color: var(--text2); }
-  .b-purple { background: var(--purple-bg); color: var(--purple); }
-  .b-teal { background: var(--teal-bg); color: var(--teal); }
+    .card {
+      background: linear-gradient(145deg, rgba(30,30,36,0.96), rgba(20,20,25,0.96));
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
 
-  .card-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 5px;
-    white-space: nowrap;
-    font-family: 'DM Mono', monospace;
-  }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top left, rgba(166,226,46,0.05), transparent 38%),
+        radial-gradient(circle at bottom right, rgba(249,38,114,0.05), transparent 42%);
+      pointer-events: none;
+    }
 
-  .ct-idfc { background: var(--blue-bg); color: var(--blue); }
-  .ct-axis { background: var(--amber-bg); color: var(--amber); }
-  .ct-icici { background: var(--green-bg); color: var(--green); }
-  .ct-wow { background: var(--purple-bg); color: var(--purple); }
-  .ct-select { background: var(--teal-bg); color: var(--teal); }
-  .ct-flipkart { background: var(--pink-bg); color: var(--pink); }
-  .ct-na { background: rgba(255,255,255,0.05); color: var(--text3); }
+    .card > * { position: relative; z-index: 1; }
 
-  .where-text { font-weight: 500; color: var(--text); }
-  .notes-text { color: var(--text2); font-size: 12px; line-height: 1.5; }
-  .type-text { color: var(--text3); font-size: 12px; }
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-7 { grid-column: span 7; }
+    .span-6 { grid-column: span 6; }
+    .span-5 { grid-column: span 5; }
+    .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
 
-  .count-bar {
-    font-size: 11px;
-    color: var(--text3);
-    margin-bottom: 8px;
-    font-family: 'DM Mono', monospace;
-  }
+    .card h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
 
-  @media (max-width: 600px) {
-    .metrics { grid-template-columns: repeat(2, 1fr); }
-    body { padding: 20px 16px; }
-  }
-</style>
+    .card .subhead {
+      color: var(--text2);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 0.5px solid var(--border);
+      background: rgba(0,0,0,0.08);
+    }
+
+    thead { background: var(--bg3); }
+
+    th {
+      text-align: left;
+      padding: 11px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 0.5px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 0.5px solid var(--border);
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .wallet-cards, .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .wallet-card, .mini-box {
+      background: linear-gradient(145deg, rgba(30,30,36,0.92), rgba(20,20,25,0.92));
+      border: 0.5px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wallet-card::after, .mini-box::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--pink));
+    }
+
+    .wallet-card:hover, .mini-box:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .wallet-card:hover::after, .mini-box:hover::after { opacity: 1; }
+
+    .wallet-card.always {
+      border-color: rgba(166,226,46,0.34);
+      background: linear-gradient(145deg, rgba(166,226,46,0.08), rgba(30,30,36,0.94));
+      box-shadow: 0 0 0 1px rgba(166,226,46,0.08), 0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    .wallet-card.always::after {
+      opacity: 1;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--teal));
+    }
+
+    .wc-label, .mini-label {
+      font-size: 10px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 5px;
+    }
+
+    .wallet-card.always .wc-label {
+      color: var(--green);
+    }
+
+    .wc-name, .mini-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .wc-role, .mini-note {
+      font-size: 11px;
+      color: var(--text2);
+    }
+
+    .pill-row, .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 0.5px solid var(--border2);
+      color: var(--text2);
+      background: linear-gradient(145deg, rgba(30,30,36,0.9), rgba(20,20,25,0.9));
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill:hover {
+      color: var(--text);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(102,217,239,0.15);
+    }
+
+    .pill.active {
+      color: var(--text);
+      border-color: var(--purple);
+      box-shadow: 0 0 0 1px rgba(174,129,255,0.20), inset 0 0 24px rgba(174,129,255,0.06);
+      background: linear-gradient(145deg, rgba(174,129,255,0.10), rgba(20,20,25,0.92));
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+    }
+
+    .b-green { background: var(--green-bg); color: var(--green); }
+    .b-amber { background: var(--amber-bg); color: var(--amber); }
+    .b-blue { background: var(--blue-bg); color: var(--blue); }
+    .b-red { background: var(--red-bg); color: var(--red); }
+    .b-gray { background: rgba(255,255,255,0.06); color: var(--text2); }
+    .b-purple { background: var(--purple-bg); color: var(--purple); }
+    .b-teal { background: var(--teal-bg); color: var(--teal); }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .ct-idfc { background: var(--blue-bg); color: var(--blue); }
+    .ct-axis { background: var(--amber-bg); color: var(--amber); }
+    .ct-icici { background: var(--green-bg); color: var(--green); }
+    .ct-wow { background: var(--purple-bg); color: var(--purple); }
+    .ct-select { background: var(--teal-bg); color: var(--teal); }
+    .ct-flipkart { background: var(--pink-bg); color: var(--pink); }
+    .ct-na { background: rgba(255,255,255,0.06); color: var(--text3); }
+
+    .notes-text { color: var(--text2); font-size: 12px; line-height: 1.5; }
+    .type-text { color: var(--text3); font-size: 12px; }
+    .where-text { font-weight: 500; color: var(--text); }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg3);
+      border: 0.5px solid var(--border);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .timeline-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .date-chip {
+      background: linear-gradient(135deg, rgba(102,217,239,0.15), rgba(174,129,255,0.15));
+      border: 0.5px solid rgba(102,217,239,0.25);
+      border-radius: 12px;
+      text-align: center;
+      padding: 12px 8px;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.05;
+      color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .date-chip small {
+      display: block;
+      color: var(--text3);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    ul.clean {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    ul.clean li {
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: var(--bg3);
+      border: 0.5px solid var(--border);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .fill { height: 100%; border-radius: 999px; }
+    .fill-green { background: linear-gradient(90deg, var(--green), var(--teal)); }
+    .fill-blue { background: linear-gradient(90deg, var(--blue), var(--teal)); }
+    .fill-purple { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .callout {
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 0.5px solid var(--border);
+      color: var(--text2);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .count-bar {
+      font-size: 11px;
+      color: var(--text3);
+      margin-bottom: 8px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .tracker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .tracker-card {
+      background: linear-gradient(145deg, rgba(30,30,36,0.95), rgba(20,20,25,0.95));
+      border: 0.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tracker-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      opacity: 0.9;
+    }
+
+    .tracker-card.purple::before { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+    .tracker-card.blue::before { background: linear-gradient(90deg, var(--blue), var(--teal)); }
+
+    .tracker-title {
+      font-size: 12px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .tracker-value {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 18px;
+      outline: none;
+    }
+
+    .tracker-value:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(102,217,239,0.10);
+    }
+
+    .tracker-note {
+      margin-top: 8px;
+      color: var(--text2);
+      font-size: 11px;
+    }
+
+    .save-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #111;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn.secondary {
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      color: #0d0d11;
+    }
+
+    .save-status {
+      color: var(--text2);
+      font-size: 12px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text3);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 1160px) {
+      .span-8, .span-7, .span-6, .span-5, .span-4, .span-3 { grid-column: span 12; }
+      .hero-kpis { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 18px 14px 34px; }
+      .hero-kpis { grid-template-columns: 1fr; }
+      .timeline-item { grid-template-columns: 1fr; }
+      .date-chip { text-align: left; }
+      table { min-width: 560px; }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <div class="top-glow"></div>
+    <div class="side-glow side-glow-left"></div>
+    <div class="side-glow side-glow-right"></div>
+    <section class="hero" id="overview">
+      <div class="hero-top">
+        <div class="header">
+          <h1>Loki Finance OS</h1>
+          <p>One unified dashboard for salary routing, monthly obligations, debt attack, card controls, payment rhythm, and spend routing. A proper operating system, because using six cards and five bank accounts without one was obviously a terrible hobby.</p>
+          <div class="chips">
+            <span class="chip">Salary credit: 27th</span>
+            <span class="chip">Axis statement: 18th</span>
+            <span class="chip">IDFC statement: 22nd</span>
+            <span class="chip">ICICI statement: 22nd</span>
+            <span class="chip">Pay window: 1st–3rd</span>
+            <span class="chip">Control account: IDFC</span>
+          </div>
+        </div>
+      </div>
 
-<div class="header">
-  <h1>Loki's Card Spend Bible</h1>
-  <p>Complete routing guide — every rupee optimized</p>
-</div>
+      <div class="hero-kpis">
+        <div class="metric">
+          <div class="metric-label">Monthly take home</div>
+          <div class="metric-val">₹1,30,000</div>
+          <div class="metric-sub">Axis salary account inflow</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Fixed obligations</div>
+          <div class="metric-val">₹1,05,500</div>
+          <div class="metric-sub">EMIs + family + CC EMI + debt + gold interest</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Monthly spend budget</div>
+          <div class="metric-val">₹15,000</div>
+          <div class="metric-sub">Transferred to IDFC for variable spending</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Axis residual buffer</div>
+          <div class="metric-val">₹4,500</div>
+          <div class="metric-sub">Left after planned routing</div>
+        </div>
+      </div>
 
-<div class="metrics">
-  <div class="metric">
-    <div class="metric-label">Always in wallet</div>
-    <div class="metric-val">Power+ · Horizon</div>
+      <div class="nav">
+        <a href="#cashflow">Cashflow</a>
+        <a href="#automations">Automations</a>
+        <a href="#cards">Card strategy</a>
+        <a href="#spend-bible">Spend routing</a>
+        <a href="#guardrails">Guardrails</a>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card span-12" id="cashflow">
+        <h2>Monthly Cashflow Map</h2>
+        <div class="subhead">This is the main machine. Don’t freestyle around it.</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Bucket</th>
+                <th>Amount</th>
+                <th>Where</th>
+                <th>Rule</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="where-text">Salary inflow</td>
+                <td>₹1,30,000</td>
+                <td>Axis Prestige</td>
+                <td class="notes-text">Salary lands on the 27th. This is the source account, not a spending wallet.</td>
+              </tr>
+              <tr>
+                <td class="where-text">PL + home loan EMI</td>
+                <td>₹61,000</td>
+                <td>Axis Prestige</td>
+                <td class="notes-text">Keep NACH and leave enough balance. Missing EMI for a cashback fantasy would be deeply stupid.</td>
+              </tr>
+              <tr>
+                <td class="where-text">Family support</td>
+                <td>₹22,500</td>
+                <td>Axis Prestige</td>
+                <td class="notes-text">₹7,500 Shalu + Papa, ₹5,000 Mom, ₹5,000 Dad, ₹5,000 baby support bucket already reflected in the family total used earlier.</td>
+              </tr>
+              <tr>
+                <td class="where-text">CC EMI</td>
+                <td>₹5,500</td>
+                <td>Axis Prestige</td>
+                <td class="notes-text">Fixed obligation. Treat separately from monthly card spends.</td>
+              </tr>
+              <tr>
+                <td class="where-text">Friend debt attack</td>
+                <td>₹25,000</td>
+                <td>Axis transfer</td>
+                <td class="notes-text">Priority debt bucket until cleared.</td>
+              </tr>
+              <tr>
+                <td class="where-text">Gold interest</td>
+                <td>₹2,000</td>
+                <td>Auto transfer</td>
+                <td class="notes-text">Keeps the gold loan from becoming noisier than it already is.</td>
+              </tr>
+              <tr>
+                <td class="where-text">Variable spending pool</td>
+                <td>₹15,000</td>
+                <td>IDFC Savings</td>
+                <td class="notes-text">All non-fixed spending must be mentally backed by this amount.</td>
+              </tr>
+              <tr>
+                <td class="where-text">Emergency fund</td>
+                <td>₹5,000</td>
+                <td>HDFC Max Savings</td>
+                <td class="notes-text">Small boring transfer. Exactly the type that saves people later.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card span-7">
+        <h2>Account Architecture</h2>
+        <div class="subhead">Every account gets a job. Random overlap is banned.</div>
+        <div class="wallet-cards">
+          <div class="wallet-card always">
+            <div class="wc-label">Source account</div>
+            <div class="wc-name">Axis Prestige</div>
+            <div class="wc-role">Salary + fixed outflows + debt routing</div>
+          </div>
+          <div class="wallet-card always">
+            <div class="wc-label">Control account</div>
+            <div class="wc-name">IDFC Savings</div>
+            <div class="wc-role">Spend budget + all CC payment truth</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Safety account</div>
+            <div class="wc-name">HDFC Max</div>
+            <div class="wc-role">Emergency fund only</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Wealth account</div>
+            <div class="wc-name">ICICI 3-in-1</div>
+            <div class="wc-role">Investments only</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Spare</div>
+            <div class="wc-name">IOB</div>
+            <div class="wc-role">Dormant / backup only</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-5">
+        <h2>Core Guardrails</h2>
+        <div class="subhead">These are the rules that keep the whole thing from degenerating.</div>
+        <ul class="clean">
+          <li><strong>IDFC is the source of truth.</strong> If money is not effectively available there, you do not spend it on credit.</li>
+          <li><strong>Autopay stays ON</strong> for all cards with full amount due.</li>
+          <li><strong>Pay manually on 1st–3rd</strong> via HDFC BillPay only as an optimization layer.</li>
+          <li><strong>IDFC buffer floor:</strong> ₹15,000 minimum. If it breaks, spending freezes.</li>
+          <li><strong>Axis buffer floor:</strong> leave a few thousand there so EMIs and automated pulls never bounce.</li>
+        </ul>
+      </section>
+
+      <section class="card span-6" id="automations">
+        <h2>Automations</h2>
+        <div class="subhead">Set once. Review monthly. Avoid manually roleplaying as a banking system.</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date / Trigger</th>
+                <th>Action</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>27th</td>
+                <td>Axis → IDFC ₹15,000</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>27th</td>
+                <td>Axis → HDFC ₹5,000</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>1st</td>
+                <td>₹7,500 to Shalu + Papa</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>1st</td>
+                <td>₹5,000 to Mom</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>1st</td>
+                <td>₹5,000 to Dad</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>1st</td>
+                <td>₹25,000 to friend debt repayment bucket</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>Auto</td>
+                <td>₹2,000 gold loan interest transfer</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>Auto</td>
+                <td>EMIs from Axis</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>Before due date</td>
+                <td>All CC autopay from IDFC using full amount due</td>
+                <td><span class="badge b-green">Required</span></td>
+              </tr>
+              <tr>
+                <td>Alerts</td>
+                <td>Low balance alerts for Axis + IDFC</td>
+                <td><span class="badge b-blue">Recommended</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card span-6">
+        <h2>Billing Rhythm</h2>
+        <div class="subhead">The only rhythm you need. Stop optimizing statement dates every three minutes.</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="date-chip">18<small>Axis</small></div>
+            <div>
+              <div class="where-text">Axis statement generated</div>
+              <div class="notes-text">Flipkart Axis, MyZone, Horizon all hit here. Review, don’t react.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="date-chip">22<small>IDFC + ICICI</small></div>
+            <div>
+              <div class="where-text">Main financial checkpoint</div>
+              <div class="notes-text">Open all card apps and note total outstanding. This is the monthly damage report.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="date-chip">27<small>Salary</small></div>
+            <div>
+              <div class="where-text">System reset</div>
+              <div class="notes-text">Salary arrives, routing starts, funds are assigned before your brain invents wants.</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="date-chip">1–3<small>Pay</small></div>
+            <div>
+              <div class="where-text">Manual payment window</div>
+              <div class="notes-text">Use HDFC BillPay if you want the cashback layer. Leave autopay alive as insurance against your own optimism.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-12" id="cards">
+        <h2>Card Stack Strategy</h2>
+        <div class="subhead">Your actual always-carry setup stays the same: Power+ and Horizon. The earlier change to Amazon Pay ICICI as an always-carry card was wrong, so I fixed it instead of pretending the dashboard was somehow wiser than your real wallet.</div>
+        <div class="wallet-cards">
+          <div class="wallet-card always">
+            <div class="wc-label">Always carry</div>
+            <div class="wc-name">IDFC First Power+</div>
+            <div class="wc-role">Essentials, grocery, utilities, pharmacy, fuel default</div>
+          </div>
+          <div class="wallet-card always">
+            <div class="wc-label">Always carry</div>
+            <div class="wc-name">Axis Horizon</div>
+            <div class="wc-role">Lifestyle, mall, dining, direct airline booking, lounge access</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Pick when needed</div>
+            <div class="wc-name">Amazon Pay ICICI</div>
+            <div class="wc-role">Amazon ecosystem, OTA travel fallback, insurance via Amazon Pay</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Pick when needed</div>
+            <div class="wc-name">Flipkart Axis</div>
+            <div class="wc-role">Flipkart, Myntra, Zomato, emergency app orders</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Pick when needed</div>
+            <div class="wc-name">IDFC WOW</div>
+            <div class="wc-role">Cloud, SaaS, any USD billing</div>
+          </div>
+          <div class="wallet-card">
+            <div class="wc-label">Pick when needed</div>
+            <div class="wc-name">IDFC First Select</div>
+            <div class="wc-role">Backup card and movie offer card</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-4">
+        <h2>Debt Attack</h2>
+        <div class="subhead">Clear social debt first. Then finish the gold loan principal.</div>
+        <div class="mini-grid">
+          <div class="mini-box">
+            <div class="mini-label">Friend debt</div>
+            <div class="mini-value">₹1,50,000</div>
+            <div class="mini-note">Monthly attack: ₹25,000</div>
+            <div class="bar"><div class="fill fill-blue" style="width: 16.7%"></div></div>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Gold loan</div>
+            <div class="mini-value">₹2,20,000</div>
+            <div class="mini-note">Interest serviced now. Principal attack later.</div>
+            <div class="bar"><div class="fill fill-purple" style="width: 7%"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-4">
+        <h2>Buffer Logic</h2>
+        <div class="subhead">Because one bad week should not wreck the month.</div>
+        <div class="mini-grid">
+          <div class="mini-box">
+            <div class="mini-label">IDFC minimum floor</div>
+            <div class="mini-value">₹15,000</div>
+            <div class="mini-note">Below this, spending stops except essentials.</div>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Axis operating cushion</div>
+            <div class="mini-value">₹4,500+</div>
+            <div class="mini-note">Enough to absorb timing mismatches and auto-debits.</div>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Daily spend reference</div>
+            <div class="mini-value">~₹500/day</div>
+            <div class="mini-note">Not a rigid rule, but a useful slap from reality.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card span-4" id="guardrails">
+        <h2>Do / Don’t</h2>
+        <div class="subhead">The boring rules that actually matter.</div>
+        <ul class="clean">
+          <li><strong>Do:</strong> Review all cards on the 22nd.</li>
+          <li><strong>Do:</strong> Pay all cards by the 3rd even if due date is later.</li>
+          <li><strong>Do:</strong> Keep HDFC BillPay as bonus, not as your only defense.</li>
+          <li><strong>Don’t:</strong> Spend based on available credit limit.</li>
+          <li><strong>Don’t:</strong> Split payments from multiple accounts.</li>
+          <li><strong>Don’t:</strong> Add more cards into active rotation for tiny rewards.</li>
+        </ul>
+      </section>
+
+      <section class="card span-12" id="spend-bible">
+        <h2>Spend Routing Bible</h2>
+        <div class="subhead">Integrated spend-routing layer merged into the main finance dashboard.</div>
+        <div class="section-label">Filter by Category</div>
+        <div class="filters" id="filters"></div>
+        <div class="count-bar" id="count"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:22%">Spend / Platform</th>
+                <th style="width:15%">Best Card</th>
+                <th style="width:10%">Rate</th>
+                <th style="width:11%">Reward Type</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card span-6">
+        <h2>Autopay Logic</h2>
+        <div class="subhead">Your final payments architecture.</div>
+        <ul class="clean">
+          <li><strong>Primary:</strong> Manual HDFC BillPay on 1st–3rd to extract whatever cashback exists.</li>
+          <li><strong>Fallback:</strong> All cards keep full-amount autopay active from IDFC.</li>
+          <li><strong>Reason:</strong> Optimization without removing the safety net. Humans love acting invincible until the baby, work, and life all happen in one week.</li>
+          <li><strong>Verification:</strong> After manual payment, check that total due becomes zero or near zero in the issuing app.</li>
+        </ul>
+      </section>
+
+      <section class="card span-6">
+        <h2>Trackable Snapshot</h2>
+        <div class="subhead">Yes, tracking is possible here. This is now a lightweight local tracker using browser storage, so the values stay in this dashboard on this device unless you clear browser data. Human civilization somehow advanced enough for that.</div>
+        <div class="tracker-grid">
+          <div class="tracker-card">
+            <div class="tracker-title">Friend debt remaining</div>
+            <input id="friendDebt" class="tracker-value" type="number" value="150000" min="0" step="1000" />
+            <div class="tracker-note">Update after each repayment</div>
+          </div>
+          <div class="tracker-card purple">
+            <div class="tracker-title">Gold loan principal remaining</div>
+            <input id="goldDebt" class="tracker-value" type="number" value="220000" min="0" step="1000" />
+            <div class="tracker-note">Update when you start attacking principal</div>
+          </div>
+          <div class="tracker-card blue">
+            <div class="tracker-title">Current month card spend</div>
+            <input id="monthSpend" class="tracker-value" type="number" value="0" min="0" step="500" />
+            <div class="tracker-note">Compare against ₹15,000 budget</div>
+          </div>
+          <div class="tracker-card">
+            <div class="tracker-title">Emergency fund balance</div>
+            <input id="emergencyFund" class="tracker-value" type="number" value="0" min="0" step="1000" />
+            <div class="tracker-note">Track actual HDFC emergency corpus</div>
+          </div>
+        </div>
+        <div class="save-row">
+          <button class="btn" id="saveTracker">Save tracker</button>
+          <button class="btn secondary" id="resetTracker">Reset tracker</button>
+          <div class="save-status" id="saveStatus">No local changes saved yet.</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="footer-note">Run this for 6 months before touching the architecture again. Stability first, cleverness later.</div>
   </div>
-  <div class="metric">
-    <div class="metric-label">Best cashback rate</div>
-    <div class="metric-val">5% (Power+ / ICICI)</div>
-  </div>
-  <div class="metric">
-    <div class="metric-label">Best travel rate</div>
-    <div class="metric-val">5 Mi / ₹100</div>
-  </div>
-</div>
 
-<div class="wallet-section">
-  <div class="section-label">Your Card Stack</div>
-  <div class="wallet-cards">
-    <div class="wallet-card always">
-      <div class="wc-label">Always carry</div>
-      <div class="wc-name">IDFC First Power+</div>
-      <div class="wc-role">Essentials default</div>
-    </div>
-    <div class="wallet-card always">
-      <div class="wc-label">Always carry</div>
-      <div class="wc-name">Axis Horizon</div>
-      <div class="wc-role">Lifestyle & travel</div>
-    </div>
-    <div class="wallet-card">
-      <div class="wc-label">Pick up when needed</div>
-      <div class="wc-name">Amazon Pay ICICI</div>
-      <div class="wc-role">Online / insurance</div>
-    </div>
-    <div class="wallet-card">
-      <div class="wc-label">Pick up when needed</div>
-      <div class="wc-name">Flipkart Axis</div>
-      <div class="wc-role">Zomato / Flipkart</div>
-    </div>
-    <div class="wallet-card">
-      <div class="wc-label">Pick up when needed</div>
-      <div class="wc-name">IDFC WOW</div>
-      <div class="wc-role">Cloud / USD only</div>
-    </div>
-    <div class="wallet-card">
-      <div class="wc-label">Pick up when needed</div>
-      <div class="wc-name">IDFC First Select</div>
-      <div class="wc-role">Movie nights</div>
-    </div>
-  </div>
-</div>
+  <script>
+    const data = [
+      { cat:"Grocery", where:"BigBasket / Zepto", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Reliable grocery default." },
+      { cat:"Grocery", where:"Amazon Fresh", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best for bulk pantry purchases on Amazon." },
+      { cat:"Grocery", where:"Blinkit / Swiggy Instamart", card:"Flipkart Axis", ct:"flipkart", rate:"4%", rc:"b-amber", type:"Cashback", notes:"Emergency app orders." },
+      { cat:"Grocery", where:"Reliance Fresh / Nilgiris / More", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Use card directly, not UPI." },
+      { cat:"Grocery", where:"Pazhamudir Nilayam / Kovai Pazhamudir", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Strong grocery MCC behavior." },
+      { cat:"Bills & Utilities", where:"TANGEDCO", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Use right payment route. Horizon is useless here." },
+      { cat:"Bills & Utilities", where:"Airtel / Jio postpaid", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Telecom default." },
+      { cat:"Bills & Utilities", where:"ACT Fibernet", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Portal payment." },
+      { cat:"Bills & Utilities", where:"Metrowater Chennai", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Utility default." },
+      { cat:"Bills & Utilities", where:"FASTag recharge", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Transportation exclusions kill Horizon here." },
+      { cat:"Food & Dining", where:"Zomato / Swiggy order", card:"Flipkart Axis", ct:"flipkart", rate:"4%", rc:"b-amber", type:"Cashback", notes:"Straightforward win." },
+      { cat:"Food & Dining", where:"Fine dining / restaurants", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Lifestyle dining card." },
+      { cat:"Food & Dining", where:"Coffee chains", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Counter purchase default." },
+      { cat:"Online Shopping", where:"Amazon", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best Amazon ecosystem card. Obviously." },
+      { cat:"Online Shopping", where:"Flipkart / Myntra", card:"Flipkart Axis", ct:"flipkart", rate:"5%", rc:"b-green", type:"Cashback", notes:"Use where it is actually strong." },
+      { cat:"Online Shopping", where:"Ajio / Nykaa / Tata Cliq", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Lifestyle shopping default." },
+      { cat:"Offline Shopping", where:"Mall stores / branded apparel", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Default offline lifestyle card." },
+      { cat:"Offline Shopping", where:"Pharmacy - Apollo / MedPlus", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Switch to Power+ for pharmacy even in a mall." },
+      { cat:"Jewelry", where:"GRT / Tanishq / Malabar", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Reasonable fit if offers are absent." },
+      { cat:"Travel", where:"IndiGo / airline direct", card:"Axis Horizon", ct:"axis", rate:"5 Mi/₹100", rc:"b-green", type:"Miles", notes:"Direct booking only. OTA kills this." },
+      { cat:"Travel", where:"MakeMyTrip / Cleartrip / Ixigo", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Real cashback beats weaker miles here." },
+      { cat:"Travel", where:"RedBus / IRCTC", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Simple OTA travel fallback." },
+      { cat:"Travel", where:"Airport lounge", card:"Axis Horizon", ct:"axis", rate:"Access", rc:"b-blue", type:"Benefit", notes:"Use the lounge entitlement, because at least one bank feature should feel civilized." },
+      { cat:"Travel", where:"Uber / Ola / Rapido", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"Nothing brilliant in stack, just least bad." },
+      { cat:"Tech & Cloud", where:"AWS / cloud / USD SaaS", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Most important tech card for dollar billing." },
+      { cat:"Tech & Cloud", where:"GitHub / Vercel / JetBrains / Netlify", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any USD toolchain bill goes here." },
+      { cat:"Insurance & Finance", where:"Insurance via Amazon Pay if available", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Useful because insurance usually pays nothing." },
+      { cat:"Insurance & Finance", where:"Mutual funds / SIP / tax / rent", card:"N/A - bank transfer", ct:"na", rate:"0%", rc:"b-red", type:"Excluded", notes:"Stop trying to hack rewards from excluded categories." },
+      { cat:"Entertainment", where:"PVR / SPI / Sathyam", card:"IDFC First Select", ct:"select", rate:"Offer", rc:"b-teal", type:"Offer", notes:"Use offer card if valid, otherwise move on with your life." },
+      { cat:"Entertainment", where:"Amazon Prime", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best obvious routing." },
+      { cat:"Entertainment", where:"Netflix / Spotify / YouTube Premium INR", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"INR subscription default unless Amazon Pay route exists." },
+      { cat:"Fuel", where:"Fuel stations", card:"IDFC Power+", ct:"idfc", rate:"1%", rc:"b-gray", type:"Value back", notes:"Better than 0%. What a glamorous category." },
+      { cat:"Wallet & UPI", where:"Wallet top-up / UPI", card:"Avoid", ct:"na", rate:"0%", rc:"b-red", type:"Excluded", notes:"Use direct card payment whenever possible." },
+      { cat:"Subscriptions", where:"ChatGPT / Claude / Obsidian Sync / Akiflow USD", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"USD = WOW. This should not require emotional processing." },
+      { cat:"Subscriptions", where:"App Store / Play Store / Netflix INR", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"INR digital subscription default." },
+      { cat:"Subscriptions", where:"Amazon-linked subscriptions", card:"Amazon Pay ICICI", ct:"icici", rate:"2-5%", rc:"b-green", type:"Cashback", notes:"Use real cashback when available." }
+    ];
 
-<div class="section-label">Filter by Category</div>
-<div class="filters" id="filters"></div>
-<div class="count-bar" id="count"></div>
+    const cats = ["All", ...new Set(data.map(d => d.cat))];
+    let active = "All";
+    const filterDiv = document.getElementById("filters");
 
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th style="width:22%">Spend / Platform</th>
-        <th style="width:15%">Best Card</th>
-        <th style="width:10%">Rate</th>
-        <th style="width:11%">Reward Type</th>
-        <th>Notes & Chennai Intel</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-</div>
+    cats.forEach(c => {
+      const el = document.createElement("span");
+      el.className = "pill" + (c === "All" ? " active" : "");
+      el.textContent = c;
+      el.onclick = () => {
+        active = c;
+        filterDiv.querySelectorAll(".pill").forEach(p => p.classList.toggle("active", p.textContent === c));
+        render();
+      };
+      filterDiv.appendChild(el);
+    });
 
-<script>
-const data = [
-  { cat:"Grocery", where:"BigBasket / Zepto", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"MCC 5411 — most reliable grocery trigger in your stack" },
-  { cat:"Grocery", where:"Amazon Fresh", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best for bulk monthly pantry runs — direct wallet cashback" },
-  { cat:"Grocery", where:"Blinkit / Swiggy Instamart", card:"Flipkart Axis", ct:"flipkart", rate:"4%", rc:"b-amber", type:"Cashback", notes:"Emergency diapers/wipes — Flipkart Axis wins here" },
-  { cat:"Grocery", where:"Reliance Fresh / Nilgiris / More", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Swipe physical card at POS — don't use UPI" },
-  { cat:"Grocery", where:"Pazhamudir Nilayam (Chennai)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"All Chennai branches code as grocery MCC reliably" },
-  { cat:"Grocery", where:"Kovai Pazhamudir", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Same as Pazhamudir — physical swipe" },
-  { cat:"Grocery", where:"Country Delight / Akshayakalpa", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Use wallet top-up inside their app, not UPI" },
-  { cat:"Grocery", where:"DMart (if card accepted)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"DMart often prefers cash/UPI — use Power+ if card accepted" },
+    function render() {
+      const tbody = document.getElementById("rows");
+      const countEl = document.getElementById("count");
+      const filtered = active === "All" ? data : data.filter(d => d.cat === active);
+      countEl.textContent = `${filtered.length} entries`;
+      tbody.innerHTML = filtered.map(d => `
+        <tr>
+          <td class="where-text">${d.where}</td>
+          <td><span class="card-tag ct-${d.ct}">${d.card}</span></td>
+          <td><span class="badge ${d.rc}">${d.rate}</span></td>
+          <td class="type-text">${d.type}</td>
+          <td class="notes-text">${d.notes}</td>
+        </tr>
+      `).join("");
+    }
 
-  { cat:"Bills & Utilities", where:"TANGEDCO (Electricity)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Pay via HP Pay App or IDFC First App — correct MCC trigger. Never use Horizon (0%)." },
-  { cat:"Bills & Utilities", where:"Airtel / Jio postpaid", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Pay via IDFC First App under Telecom category" },
-  { cat:"Bills & Utilities", where:"ACT Fibernet", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"IDFC First App or ACT portal direct" },
-  { cat:"Bills & Utilities", where:"Metrowater Chennai", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Chennai Metrowater portal — card payment" },
-  { cat:"Bills & Utilities", where:"Indane / HP Gas", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"HP Pay App gives best category match" },
-  { cat:"Bills & Utilities", where:"FASTag recharge", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Never use Horizon — Transportation excluded (0%). Power+ wins." },
-  { cat:"Bills & Utilities", where:"Piped gas (IGL/MGL)", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Utility MCC — Power+ default" },
+    const trackerIds = ["friendDebt", "goldDebt", "monthSpend", "emergencyFund"];
+    const saveStatus = document.getElementById("saveStatus");
 
-  { cat:"Food & Dining", where:"Zomato / Swiggy (online order)", card:"Flipkart Axis", ct:"flipkart", rate:"4%", rc:"b-amber", type:"Cashback", notes:"Direct statement cashback. Horizon gives only 2 Mi — Flipkart Axis wins." },
-  { cat:"Food & Dining", where:"Fine dining — ECR / OMR", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Buhari, The Great Kabab Factory, Annalakshmi, Cream Centre" },
-  { cat:"Food & Dining", where:"Starbucks / Blue Tokai / Third Wave", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Counter purchase — tap or swipe Horizon" },
-  { cat:"Food & Dining", where:"Mall food courts", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Phoenix / VR Mall / Express Avenue food courts" },
-  { cat:"Food & Dining", where:"Local restaurants (non-mall)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Saravana Bhavan, Murugan Idli, Hotel Palmgrove etc." },
-  { cat:"Food & Dining", where:"Swiggy Dineout / EazyDiner", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Online table booking + pay at restaurant" },
+    function loadTracker() {
+      try {
+        trackerIds.forEach(id => {
+          const el = document.getElementById(id);
+          const stored = localStorage.getItem(`loki-finance-${id}`);
+          if (stored !== null) el.value = stored;
+        });
+        const lastSaved = localStorage.getItem("loki-finance-last-saved");
+        if (lastSaved) saveStatus.textContent = `Loaded local tracker data. Last saved: ${lastSaved}`;
+      } catch (e) {
+        saveStatus.textContent = "Local tracking unavailable in this preview.";
+      }
+    }
 
-  { cat:"Online Shopping", where:"Amazon / Cloudtail", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Best card for entire Amazon ecosystem — electronics, baby gear, monitors" },
-  { cat:"Online Shopping", where:"Flipkart / Myntra", card:"Flipkart Axis", ct:"flipkart", rate:"5%", rc:"b-green", type:"Cashback", notes:"Dhriti's toys, clothes — FirstCry brand on Flipkart works too" },
-  { cat:"Online Shopping", where:"Ajio", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Better than flat 1% on Power+" },
-  { cat:"Online Shopping", where:"Nykaa", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"For wife's purchases — Horizon is best in stack here" },
-  { cat:"Online Shopping", where:"Meesho / Snapdeal", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"No card gives great reward here — ICICI at 1% is safest" },
-  { cat:"Online Shopping", where:"FirstCry (direct site)", card:"Amazon Pay ICICI", ct:"icici", rate:"1-2%", rc:"b-gray", type:"Cashback", notes:"Check if available on Amazon — if yes, Amazon Pay ICICI at 5%" },
-  { cat:"Online Shopping", where:"Tata Cliq / Croma online", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Electronics / appliances online" },
+    function saveTracker() {
+      try {
+        trackerIds.forEach(id => {
+          const el = document.getElementById(id);
+          localStorage.setItem(`loki-finance-${id}`, el.value || "0");
+        });
+        const stamp = new Date().toLocaleString();
+        localStorage.setItem("loki-finance-last-saved", stamp);
+        saveStatus.textContent = `Saved locally on this browser at ${stamp}`;
+      } catch (e) {
+        saveStatus.textContent = "Could not save locally in this environment.";
+      }
+    }
 
-  { cat:"Offline Shopping", where:"Phoenix / VR Mall / Express Avenue", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Default mall card — clothing, shoes, lifestyle stores" },
-  { cat:"Offline Shopping", where:"Zara / H&M / Nike / Adidas", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"All branded apparel stores" },
-  { cat:"Offline Shopping", where:"BabyHug / Mothercare", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Physical stores — Dhriti's shopping" },
-  { cat:"Offline Shopping", where:"Reliance Digital / Croma", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Check for bank offers first — HDFC/SBI deals common here" },
-  { cat:"Offline Shopping", where:"Apple Store (Aptronix / Imagine)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"MacBook / iPhone — check for no-cost EMI bank offer first" },
-  { cat:"Offline Shopping", where:"Ritchie Street (PC components)", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"Local shops — low rewards everywhere, ICICI safest bet" },
-  { cat:"Offline Shopping", where:"Pharmacy — Apollo / Medplus", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Even inside malls — switch to Power+ at pharmacy counter" },
+    function resetTracker() {
+      try {
+        document.getElementById("friendDebt").value = 150000;
+        document.getElementById("goldDebt").value = 220000;
+        document.getElementById("monthSpend").value = 0;
+        document.getElementById("emergencyFund").value = 0;
+        saveTracker();
+      } catch (e) {
+        saveStatus.textContent = "Could not reset tracker.";
+      }
+    }
 
-  { cat:"Jewelry", where:"GRT Jewellers (offline / scheme)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"MCC 5944 NOT in Horizon exclusion list. Monthly ₹11k = 2,640 Mi/year." },
-  { cat:"Jewelry", where:"Tanishq / Malabar Gold", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Verify first month credits — some chains use different MCC" },
-  { cat:"Jewelry", where:"Lalitha Jewellery", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Check for HDFC/SBI festive offers before swiping Horizon" },
+    document.getElementById("saveTracker").addEventListener("click", saveTracker);
+    document.getElementById("resetTracker").addEventListener("click", resetTracker);
 
-  { cat:"Travel", where:"IndiGo direct site", card:"Axis Horizon", ct:"axis", rate:"5 Mi/₹100", rc:"b-green", type:"Miles", notes:"ONLY on airline direct site — NOT via MMT/Cleartrip. Best rate in stack." },
-  { cat:"Travel", where:"Air India / SpiceJet direct", card:"Axis Horizon", ct:"axis", rate:"5 Mi/₹100", rc:"b-green", type:"Miles", notes:"Same rule — direct booking only for 5 Mi rate" },
-  { cat:"Travel", where:"MakeMyTrip / Cleartrip / Ixigo", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"OTA booking = 2 Mi on Horizon vs 2% real cashback on ICICI. ICICI wins." },
-  { cat:"Travel", where:"RedBus (bus tickets)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Real cashback beats miles for OTA travel" },
-  { cat:"Travel", where:"IRCTC (train tickets)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Check IRCTC bank offers first — SBI/HDFC often run discounts" },
-  { cat:"Travel", where:"Hotels via Amazon Travel", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Book hotels on Amazon Travel for 5% cashback" },
-  { cat:"Travel", where:"MAA Domestic Lounge", card:"Axis Horizon", ct:"axis", rate:"8/qtr", rc:"b-blue", type:"Lounge access", notes:"Travel Club Lounge — no spend requirement in 2026. Best quarterly limit in stack." },
-  { cat:"Travel", where:"MAA International Lounge", card:"Axis Horizon", ct:"axis", rate:"2/qtr", rc:"b-blue", type:"Lounge access", notes:"Travel Club Lounge — international terminal" },
-  { cat:"Travel", where:"Uber / Ola / Rapido", card:"Amazon Pay ICICI", ct:"icici", rate:"1%", rc:"b-gray", type:"Cashback", notes:"Horizon gives 0% (Transportation excluded). ICICI 1% is best you have." },
-  { cat:"Travel", where:"Chennai Metro / MTC bus", card:"IDFC Power+", ct:"idfc", rate:"5%", rc:"b-green", type:"Value back", notes:"Pay via card / app wallet top-up — Power+ for transit" },
-
-  { cat:"Tech & Cloud", where:"AWS / cloud (USD billing)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Saves 3.5% + GST on every dollar. Most important card for DevOps cloud bills." },
-  { cat:"Tech & Cloud", where:"DigitalOcean / Linode / Hetzner", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"All USD SaaS — WOW only" },
-  { cat:"Tech & Cloud", where:"GitHub / Vercel / Netlify", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any USD subscription — WOW" },
-  { cat:"Tech & Cloud", where:"JetBrains / Obsidian / Akiflow (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any productivity SaaS billed in USD — WOW always" },
-  { cat:"Tech & Cloud", where:"Indian SaaS / INR billing", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Zoho, Freshworks etc. — INR billing, Horizon default" },
-
-  { cat:"Insurance & Finance", where:"Max Life premium (Amazon Pay portal)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Most cards give 0% on insurance. Amazon Pay gives 2% via portal. Saves thousands/year." },
-  { cat:"Insurance & Finance", where:"Health insurance (Aditya Birla)", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Pay via Amazon Pay portal if listed" },
-  { cat:"Insurance & Finance", where:"Vehicle insurance renewal", card:"Amazon Pay ICICI", ct:"icici", rate:"2%", rc:"b-amber", type:"Cashback", notes:"Check insurer's site for bank offers — otherwise Amazon Pay" },
-  { cat:"Insurance & Finance", where:"Mutual funds / SIP", card:"N/A — use bank transfer", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"No card rewards on MF/SIP. Use direct bank transfer." },
-  { cat:"Insurance & Finance", where:"Income tax / GST payment", card:"N/A — use net banking", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"Govt. Institutions — all cards give 0%. Use net banking." },
-  { cat:"Insurance & Finance", where:"Rent payment (NoBroker/Rentpay)", card:"N/A — use net banking", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"Rent excluded on Horizon. Other cards charge processing fee. Net banking best." },
-
-  { cat:"Entertainment", where:"PVR / SPI Cinemas (Sathyam)", card:"IDFC First Select", ct:"select", rate:"BOGO", rc:"b-teal", type:"Offer", notes:"Book via District App (formerly BookMyShow). Best movie deal in stack." },
-  { cat:"Entertainment", where:"BookMyShow (non-BOGO)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"If Select BOGO not applicable — use Horizon" },
-  { cat:"Entertainment", where:"Kids play area (Timezone / Smaaash)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Mall entertainment zones" },
-  { cat:"Entertainment", where:"Amazon Prime / Prime Video", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Always Amazon Pay ICICI for Prime subscriptions" },
-  { cat:"Entertainment", where:"Spotify / Netflix / OTT (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Check if on Amazon — if yes, use Amazon Pay ICICI (2-5%)" },
-
-  { cat:"Fuel", where:"Indian Oil / HP / Bharat Petrol", card:"IDFC Power+", ct:"idfc", rate:"1%", rc:"b-gray", type:"Value back", notes:"Horizon excludes fuel (0%). Power+ gives 1% + fuel surcharge waiver. Best in stack." },
-
-  { cat:"Wallet & UPI", where:"Paytm wallet top-up", card:"AVOID", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"Wallet top-up excluded on Horizon. Power+ doesn't reward wallets. Pay direct via card." },
-  { cat:"Wallet & UPI", where:"PhonePe / GPay UPI payments", card:"AVOID UPI", ct:"na", rate:"0%", rc:"b-red", type:"EXCLUDED", notes:"UPI transactions earn zero card rewards even if card is selected. Always pay card-direct." },
-
-  { cat:"Subscriptions", where:"ChatGPT Plus / Claude Pro (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Billed in USD — WOW saves 3.5% + GST. Never use Horizon or Power+ for USD subs." },
-  { cat:"Subscriptions", where:"Google Play Store (INR billing)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Digital goods MCC — not excluded on Horizon. Add card to Play Store payment methods." },
-  { cat:"Subscriptions", where:"Apple App Store / Apple One (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"INR billed — Horizon earns 2 Mi. Add as default payment in Apple ID settings." },
-  { cat:"Subscriptions", where:"Apple App Store / iCloud (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"If your Apple ID is billed in USD — switch to WOW immediately." },
-  { cat:"Subscriptions", where:"Spotify Premium (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"INR billing in India — Horizon default" },
-  { cat:"Subscriptions", where:"Netflix (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Netflix India bills in INR — Horizon earns miles" },
-  { cat:"Subscriptions", where:"Amazon Prime (INR)", card:"Amazon Pay ICICI", ct:"icici", rate:"5%", rc:"b-green", type:"Cashback", notes:"Always ICICI for Prime — 5% cashback beats Horizon miles easily" },
-  { cat:"Subscriptions", where:"YouTube Premium (INR)", card:"Axis Horizon", ct:"axis", rate:"2 Mi/₹100", rc:"b-amber", type:"Miles", notes:"Billed via Google — INR, Horizon earns" },
-  { cat:"Subscriptions", where:"Obsidian Sync / Publish (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"USD subscription — WOW only" },
-  { cat:"Subscriptions", where:"Akiflow / Notion / Linear (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"Any productivity SaaS in USD — WOW" },
-  { cat:"Subscriptions", where:"GitHub Copilot / JetBrains (USD)", card:"IDFC WOW", ct:"wow", rate:"0% forex", rc:"b-green", type:"Forex saving", notes:"DevOps toolchain USD subs — WOW always" },
-  { cat:"Subscriptions", where:"Any sub available via Amazon Pay", card:"Amazon Pay ICICI", ct:"icici", rate:"2-5%", rc:"b-green", type:"Cashback", notes:"If the app accepts Amazon Pay — always prefer ICICI over Horizon. Real cashback beats miles." },
-];
-
-const cats = ["All", ...new Set(data.map(d => d.cat))];
-let active = "All";
-
-const filterDiv = document.getElementById("filters");
-cats.forEach(c => {
-  const el = document.createElement("span");
-  el.className = "pill" + (c === "All" ? " active" : "");
-  el.textContent = c;
-  el.onclick = () => {
-    active = c;
-    filterDiv.querySelectorAll(".pill").forEach(p => p.classList.toggle("active", p.textContent === c));
     render();
-  };
-  filterDiv.appendChild(el);
-});
-
-function render() {
-  const tbody = document.getElementById("rows");
-  const countEl = document.getElementById("count");
-  const filtered = active === "All" ? data : data.filter(d => d.cat === active);
-  countEl.textContent = `${filtered.length} entries`;
-  tbody.innerHTML = filtered.map(d => `
-    <tr class="${d.rc === 'b-red' ? 'excluded' : ''}">
-      <td class="where-text">${d.where}</td>
-      <td><span class="card-tag ct-${d.ct}">${d.card}</span></td>
-      <td><span class="badge ${d.rc}">${d.rate}</span></td>
-      <td class="type-text">${d.type}</td>
-      <td class="notes-text">${d.notes}</td>
-    </tr>
-  `).join("");
-}
-
-render();
-</script>
+    loadTracker();
+  </script>
 </body>
 </html>
